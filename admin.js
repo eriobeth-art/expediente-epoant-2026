@@ -124,7 +124,25 @@
             ${closureEditor("conductual","Conductual",c.CONDUCTUAL_VALIDADO,c.CONDUCTUAL_SINTESIS)}
           </div>
         </section>`;
-      if(!$("#adminStudentDialog").open) $("#adminStudentDialog").showModal();
+      const studentDialog = $("#adminStudentDialog");
+      if(!studentDialog.open) studentDialog.showModal();
+
+      const resetAdminDialogScroll = () => {
+        studentDialog.scrollLeft = 0;
+        const shell = studentDialog.querySelector(".admin-detail-shell");
+        const head = studentDialog.querySelector(".dialog-head");
+        const body = studentDialog.querySelector(".dialog-body");
+        [shell, head, body].forEach(el => {
+          if(el) el.scrollLeft = 0;
+        });
+      };
+
+      resetAdminDialogScroll();
+      requestAnimationFrame(() => {
+        resetAdminDialogScroll();
+        requestAnimationFrame(resetAdminDialogScroll);
+      });
+
       document.querySelectorAll("[data-save-closure]").forEach(b=>b.addEventListener("click",()=>saveClosure(id,b.dataset.saveClosure)));
       $("#adminCertificateBtn")?.addEventListener("click",()=>generateCertificate(id));
     }catch(ex){toast(ex.message)}

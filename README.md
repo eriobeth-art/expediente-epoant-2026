@@ -53,3 +53,12 @@ Se corrigió el diálogo "Expediente individual" del Panel Administrador:
 - En tablet/celular el detalle pasa automáticamente a una sola columna.
 
 Esta corrección es únicamente de GitHub/frontend. No requiere actualizar Apps Script.
+
+
+## V2.0.4
+- Logo completo EPOANT proporcionado por el usuario.
+- Logo en inicio de sesión, vista móvil, cabecera del estudiante y cabecera del administrador.
+- Logo como favicon/icono del navegador.
+- Corrección adicional del expediente individual: se anula el desplazamiento horizontal al abrir el diálogo.
+
+Esta actualización es únicamente de GitHub/frontend. No requiere modificar Apps Script.
