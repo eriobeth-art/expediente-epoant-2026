@@ -59,9 +59,18 @@
     const groups=[...new Set(adminState.students.map(s=>String(s.grupo||"")).filter(Boolean))].sort();
     const g=$("#adminGradeFilter"), gr=$("#adminGroupFilter");
     const gv=g.value, grv=gr.value;
+
     g.innerHTML='<option value="">Todos los grados</option>'+grades.map(x=>`<option value="${esc(x)}">${esc(x)}°</option>`).join("");
     gr.innerHTML='<option value="">Todos los grupos</option>'+groups.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join("");
-    g.value=grades.includes(gv)?gv:""; gr.value=groups.includes(grv)?grv:"";
+
+    g.value=grades.includes(gv)?gv:"";
+    gr.value=groups.includes(grv)?grv:"";
+
+    // El filtro de grado solo aparece cuando realmente existen
+    // estudiantes de más de un grado.
+    const showGradeFilter = grades.length > 1;
+    g.classList.toggle("hidden", !showGradeFilter);
+    if(!showGradeFilter) g.value="";
   }
 
   function filteredStudents(){

@@ -507,3 +507,18 @@ dialog{width:min(920px,calc(100% - 28px));max-height:90vh;border:0;border-radius
     grid-template-columns:1fr !important;
   }
 }
+
+
+/* ===== V2.0.5 · FILTROS ADMINISTRATIVOS DINÁMICOS ===== */
+.admin-toolbar .filters{
+  align-items:center;
+}
+.admin-toolbar .filters .hidden{
+  display:none !important;
+}
+.admin-toolbar .filters input[type="search"]{
+  flex:1 1 320px;
+}
+.admin-toolbar .filters select{
+  flex:0 1 220px;
+}

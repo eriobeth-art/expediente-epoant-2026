@@ -62,3 +62,11 @@ Esta corrección es únicamente de GitHub/frontend. No requiere actualizar Apps 
 - Corrección adicional del expediente individual: se anula el desplazamiento horizontal al abrir el diálogo.
 
 Esta actualización es únicamente de GitHub/frontend. No requiere modificar Apps Script.
+
+
+## V2.0.5
+- El filtro "Todos los grados" se oculta automáticamente cuando solo existe un grado.
+- Si en el futuro existen estudiantes de dos o más grados, el filtro reaparece automáticamente.
+- Se conservan siempre los filtros "Todos los grupos" y "Todos los avances".
+
+Esta actualización es únicamente de GitHub/frontend. No requiere modificar Apps Script.
