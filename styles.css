@@ -146,3 +146,156 @@ dialog{width:min(920px,calc(100% - 28px));max-height:90vh;border:0;border-radius
     margin-bottom:18px;
   }
 }
+
+
+/* ===== V2.0.3 · CORRECCIÓN EXPEDIENTE INDIVIDUAL ADMIN ===== */
+
+/* El diálogo debe ser tan ancho como su contenido, no al revés. */
+#adminStudentDialog{
+  width:min(1120px, calc(100vw - 32px));
+  max-width:1120px;
+  max-height:92vh;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+/* Evita que el panel interior sea más ancho que el propio dialog. */
+#adminStudentDialog .admin-detail-shell{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  max-height:92vh;
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+/* Cabecera y cuerpo siempre dentro de los límites visibles. */
+#adminStudentDialog .dialog-head{
+  flex:0 0 auto;
+  width:100%;
+  box-sizing:border-box;
+  padding-left:26px;
+  padding-right:22px;
+}
+
+#adminStudentDialog .dialog-head > div{
+  min-width:0;
+  padding-right:12px;
+}
+
+#adminStudentDialog .dialog-head h2{
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+#adminStudentDialog .dialog-body{
+  flex:1 1 auto;
+  width:100%;
+  min-width:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  box-sizing:border-box;
+  padding:24px 26px 30px;
+}
+
+/* Las dos columnas no deben desbordarse. */
+#adminStudentDialog .detail-grid{
+  grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+  width:100%;
+  min-width:0;
+}
+
+#adminStudentDialog .detail-card,
+#adminStudentDialog .detail-section{
+  width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+
+/* Etiquetas y valores completos. */
+#adminStudentDialog .detail-card dl{
+  grid-template-columns:minmax(125px,150px) minmax(0,1fr);
+  width:100%;
+}
+
+#adminStudentDialog .detail-card dt,
+#adminStudentDialog .detail-card dd{
+  min-width:0;
+}
+
+#adminStudentDialog .detail-card dd{
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+/* Listados de actividades y documentos. */
+#adminStudentDialog .detail-list li{
+  min-width:0;
+}
+
+#adminStudentDialog .detail-list li > div{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+/* Registros extensos del diagnóstico/conductual. */
+#adminStudentDialog .record-card,
+#adminStudentDialog .record-card div{
+  min-width:0;
+}
+
+#adminStudentDialog .record-card div{
+  grid-template-columns:minmax(145px,180px) minmax(0,1fr);
+}
+
+#adminStudentDialog .record-card span{
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+/* En pantallas medianas y pequeñas, una sola columna. */
+@media(max-width:820px){
+  #adminStudentDialog{
+    width:calc(100vw - 20px);
+    max-height:94vh;
+  }
+
+  #adminStudentDialog .detail-grid,
+  #adminStudentDialog .closure-grid{
+    grid-template-columns:1fr;
+  }
+
+  #adminStudentDialog .dialog-body{
+    padding:18px;
+  }
+
+  #adminStudentDialog .dialog-head{
+    padding:18px;
+  }
+}
+
+@media(max-width:560px){
+  #adminStudentDialog .detail-card dl{
+    grid-template-columns:1fr;
+    gap:3px;
+  }
+
+  #adminStudentDialog .detail-card dt{
+    margin-top:8px;
+  }
+
+  #adminStudentDialog .record-card div{
+    grid-template-columns:1fr;
+    gap:3px;
+  }
+
+  #adminStudentDialog .detail-list li{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  #adminStudentDialog .detail-list li .status,
+  #adminStudentDialog .detail-list li .btn{
+    align-self:flex-start;
+  }
+}

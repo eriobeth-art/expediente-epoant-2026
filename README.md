@@ -1,4 +1,4 @@
-# EPOANT · Expediente de Orientación Educativa V2.0.2
+# EPOANT · Expediente de Orientación Educativa V2.0.3
 
 Esta versión corrige:
 - “El servidor todavía no está disponible”.
@@ -43,3 +43,13 @@ https://expediente.edupsic.com
 
 Usuario administrador:
 eriobeth
+
+
+## Corrección V2.0.3
+Se corrigió el diálogo "Expediente individual" del Panel Administrador:
+- Ya no se recorta el texto del lado izquierdo.
+- Se eliminó el desplazamiento horizontal accidental.
+- CURP, expediente, nombre del tutor y teléfonos se ajustan al ancho disponible.
+- En tablet/celular el detalle pasa automáticamente a una sola columna.
+
+Esta corrección es únicamente de GitHub/frontend. No requiere actualizar Apps Script.
