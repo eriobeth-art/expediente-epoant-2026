@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b3b73">
+  <title>Expediente de Orientación Educativa | EPOANT</title>
+  <meta name="description" content="Expediente de Orientación Educativa para estudiantes de la EPOANT.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="bridgeMount" aria-hidden="true"></div>
+
+  <main class="shell">
+    <section id="loginView" class="login-layout">
+      <div class="brand-panel">
+        <div class="seal" aria-label="EPOANT">E</div>
+        <div>
+          <p class="eyebrow">EPOANT · TURNO MATUTINO</p>
+          <h1>Expediente de Orientación Educativa</h1>
+          <p class="lead">Completa tus instrumentos de orientación y consulta tu avance desde un solo espacio.</p>
+        </div>
+        <div class="feature-list">
+          <div><span>✓</span> Acceso personal con CURP y PIN</div>
+          <div><span>✓</span> Avance secuencial del expediente</div>
+          <div><span>✓</span> Resguardo de evidencias en Google Drive</div>
+        </div>
+      </div>
+
+      <div class="login-card card">
+        <div class="mobile-brand">
+          <div class="seal small">E</div>
+          <div><strong>EPOANT</strong><small>Orientación Educativa</small></div>
+        </div>
+        <h2>Acceso del estudiante</h2>
+        <p class="muted">Ingresa tu CURP y el PIN asignado.</p>
+        <form id="loginForm">
+          <label>CURP
+            <input id="loginCurp" name="curp" autocomplete="username" maxlength="18" required placeholder="18 caracteres">
+          </label>
+          <label>PIN
+            <div class="pin-row">
+              <input id="loginPin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" required placeholder="6 dígitos">
+              <button class="icon-btn" type="button" id="togglePin" aria-label="Mostrar PIN">👁</button>
+            </div>
+          </label>
+          <button class="btn primary full" type="submit" id="loginBtn">Ingresar</button>
+          <div id="loginError" class="alert error hidden" role="alert"></div>
+        </form>
+        <p class="privacy-note">Tu información se utiliza exclusivamente para fines de Orientación Educativa. No compartas tu PIN.</p>
+      </div>
+    </section>
+
+    <section id="appView" class="hidden app-view">
+      <header class="topbar">
+        <div class="brand-inline">
+          <div class="seal small">E</div>
+          <div><strong>EPOANT</strong><small>Expediente de Orientación Educativa</small></div>
+        </div>
+        <div class="top-actions">
+          <span id="connectionBadge" class="badge ok">Conectado</span>
+          <button class="btn ghost" id="logoutBtn">Cerrar sesión</button>
+        </div>
+      </header>
+
+      <section class="hero card">
+        <div>
+          <p class="eyebrow">EXPEDIENTE DEL ESTUDIANTE</p>
+          <h2 id="studentName">—</h2>
+          <div class="meta" id="studentMeta"></div>
+        </div>
+        <div class="progress-block">
+          <div class="progress-number"><strong id="progressPct">0%</strong><span>completado</span></div>
+          <div class="progress"><div id="progressBar"></div></div>
+          <small id="progressText">0 de 0 actividades</small>
+        </div>
+      </section>
+
+      <section class="section-head">
+        <div><p class="eyebrow">RUTA DE TRABAJO</p><h3>Actividades del expediente</h3></div>
+        <p class="muted">Las actividades se habilitan en orden. Cuando completes una, se activará la siguiente.</p>
+      </section>
+      <div id="activitiesGrid" class="activities-grid"></div>
+
+      <section id="certificateCard" class="card certificate">
+        <div class="certificate-icon">★</div>
+        <div>
+          <h3>Constancia de cumplimiento</h3>
+          <p id="certificateText">Completa el 100% del expediente para habilitar tu constancia.</p>
+        </div>
+        <a id="certificateLink" class="btn primary hidden" target="_blank" rel="noopener">Abrir constancia</a>
+      </section>
+
+      <footer>
+        <strong>Escuela Preparatoria Oficial Anexa a la Normal de Tejupilco</strong>
+        <span>Servicio de Orientación Educativa · Dr. Eriobeth Vargas Hernández</span>
+      </footer>
+    </section>
+  </main>
+
+  <dialog id="activityDialog">
+    <form method="dialog" class="dialog-shell" id="activityForm">
+      <div class="dialog-head">
+        <div><p class="eyebrow" id="dialogType">ACTIVIDAD</p><h2 id="dialogTitle">—</h2></div>
+        <button class="icon-btn close" value="cancel" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="dialogBody" class="dialog-body"></div>
+      <div id="dialogError" class="alert error hidden"></div>
+      <div class="dialog-actions">
+        <button class="btn ghost" value="cancel">Cancelar</button>
+        <button class="btn primary" type="submit" id="saveActivityBtn">Guardar y finalizar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="config.js"></script>
+  <script src="forms.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
