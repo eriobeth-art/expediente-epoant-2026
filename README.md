@@ -1,12 +1,32 @@
-# EPOANT · Expediente de Orientación Educativa V2
+# EPOANT · Expediente de Orientación Educativa V2.0.2
 
-Versión de producción con dos módulos:
+Esta versión corrige:
+- “El servidor todavía no está disponible”.
+- Comunicación entre GitHub Pages y Google Apps Script.
+- Agrega el logo oficial EPOANT en la pantalla inicial.
+- Elimina el texto sobre la validación de la contraseña administrativa.
 
-- Portal del estudiante: CURP + PIN.
-- Panel administrador: acceso independiente protegido en Google Apps Script.
+## PASO 1 · Actualizar Google Apps Script
 
-## Publicación en GitHub
-Sube a GitHub Pages:
+Del ZIP completo sustituye:
+- backend/Code.gs
+- backend/Bridge.html
+
+Luego:
+1. Guarda.
+2. NO ejecutes de nuevo `instalarAccesoAdministrador()` si ya tienes una contraseña que deseas conservar.
+3. Ve a Implementar > Administrar implementaciones.
+4. Edita la implementación actual.
+5. Selecciona Nueva versión.
+6. Pulsa Implementar.
+
+La contraseña administrativa guardada en Script Properties se conserva.
+
+## PASO 2 · Actualizar GitHub
+
+Sube los archivos del ZIP SOLO_GITHUB y reemplaza los anteriores.
+
+Incluye:
 - index.html
 - styles.css
 - app.js
@@ -14,38 +34,12 @@ Sube a GitHub Pages:
 - forms.js
 - config.js
 - CNAME
+- epoant-logo.png
 
-NO es necesario subir la carpeta `backend` a GitHub.
+Después haz una recarga forzada con Cmd + Shift + R.
 
-## Actualización de Google Apps Script
-Sustituye en tu proyecto:
-- Code.gs
-- Bridge.html
-- appsscript.json (solo si deseas mantener el manifiesto incluido)
+Dominio:
+https://expediente.edupsic.com
 
-Después:
-1. Guarda.
-2. Ejecuta una sola vez `instalarAccesoAdministrador()`.
-3. Autoriza si Google lo solicita.
-4. Abre **Registro de ejecución** y copia el usuario y la contraseña temporal.
-5. Ve a **Implementar > Administrar implementaciones > Editar > Nueva versión > Implementar**.
-6. Conserva la misma URL `/exec` si actualizas la implementación existente.
-
-### Acceso administrador
-El usuario inicial es `eriobeth`.
-La contraseña temporal se genera de forma aleatoria al ejecutar `instalarAccesoAdministrador()`.
-No queda escrita en GitHub, Google Sheets ni en el HTML.
-
-Al ingresar al panel usa **Cambiar contraseña** para establecer una contraseña propia.
-
-## Funciones del panel administrador
-- Indicadores generales.
-- Búsqueda y filtros por grado, grupo y avance.
-- Avance individual.
-- Documentos PDF.
-- Diagnóstico integral.
-- Seguimiento conductual.
-- Validación de cierre académico y conductual.
-- Generación/habilitación de constancia.
-- Recordatorio por WhatsApp.
-- Sincronización desde la base maestra de Datos de Identificación sin borrar historial.
+Usuario administrador:
+eriobeth

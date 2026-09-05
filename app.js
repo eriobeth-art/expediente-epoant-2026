@@ -4,29 +4,94 @@
   const state={session:null,dashboard:null,current:null};
   const cfg=window.APP_CONFIG||{};
 
+  function makeId(){
+    if(globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") return globalThis.crypto.randomUUID();
+    if(globalThis.crypto && typeof globalThis.crypto.getRandomValues === "function"){
+      const b=new Uint8Array(16); globalThis.crypto.getRandomValues(b);
+      b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128;
+      const h=[...b].map(x=>x.toString(16).padStart(2,"0"));
+      return `${h.slice(0,4).join("")}-${h.slice(4,6).join("")}-${h.slice(6,8).join("")}-${h.slice(8,10).join("")}-${h.slice(10).join("")}`;
+    }
+    return `eoe-${Date.now()}-${Math.random().toString(16).slice(2)}-${Math.random().toString(16).slice(2)}`;
+  }
+
   class BridgeClient{
-    constructor(url){this.url=url;this.frame=null;this.ready=false;this.pending=new Map();this.channel=crypto.randomUUID();this.waiters=[]}
-    init(){
-      if(!this.url || this.url.includes("PON_AQUI")) throw new Error("Falta configurar la URL de Apps Script en config.js.");
-      this.frame=document.createElement("iframe");this.frame.style.display="none";
-      this.frame.src=this.url+(this.url.includes("?")?"&":"?")+"mode=bridge&channel="+encodeURIComponent(this.channel);
-      $("#bridgeMount").appendChild(this.frame);
+    constructor(url){
+      this.url=url;
+      this.channel=makeId();
+      this.pending=new Map();
+      this.ready=true;
       window.addEventListener("message",(e)=>this._onMessage(e));
-      return new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(new Error("No fue posible conectar con el servidor.")),15000);this.waiters.push(()=>{clearTimeout(t);resolve()})})
+    }
+    init(){
+      if(!this.url || this.url.includes("PON_AQUI")){
+        return Promise.reject(new Error("Falta configurar la URL de Apps Script en config.js."));
+      }
+      return Promise.resolve();
     }
     _onMessage(e){
-      if(e.source!==this.frame?.contentWindow) return;
-      const m=e.data||{}; if(m.channel!==this.channel) return;
-      if(m.type==="EOE_READY"){this.ready=true;this.waiters.splice(0).forEach(fn=>fn());return}
-      if(m.type==="EOE_RESPONSE"&&this.pending.has(m.id)){const {resolve,reject,timer}=this.pending.get(m.id);clearTimeout(timer);this.pending.delete(m.id);m.ok?resolve(m.data):reject(new Error(m.error||"Error del servidor"))}
+      const m=e.data||{};
+      if(m.type!=="EOE_RPC_RESPONSE" || m.channel!==this.channel || !this.pending.has(m.id)) return;
+      const item=this.pending.get(m.id);
+      clearTimeout(item.timer);
+      this.pending.delete(m.id);
+      try{item.iframe.remove()}catch(_){}
+      m.ok ? item.resolve(m.data) : item.reject(new Error(m.error||"Error del servidor"));
     }
     call(method,data={}){
-      if(!this.ready) return Promise.reject(new Error("Servidor no disponible."));
-      const id=crypto.randomUUID();
-      return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.pending.delete(id);reject(new Error("La operación tardó demasiado."))},30000);
-        this.pending.set(id,{resolve,reject,timer});
-        this.frame.contentWindow.postMessage({type:"EOE_REQUEST",channel:this.channel,id,method,data},"*");
-      })
+      if(!this.url) return Promise.reject(new Error("Servidor no configurado."));
+
+      const id=makeId();
+      const frameName="eoe_rpc_"+id.replace(/[^A-Za-z0-9_]/g,"");
+      const iframe=document.createElement("iframe");
+      iframe.name=frameName;
+      iframe.style.display="none";
+      iframe.setAttribute("aria-hidden","true");
+      document.body.appendChild(iframe);
+
+      const form=document.createElement("form");
+      form.method="POST";
+      form.action=this.url;
+      form.target=frameName;
+      form.style.display="none";
+
+      const fields={
+        mode:"rpc",
+        channel:this.channel,
+        id:id,
+        method:method,
+        data:JSON.stringify(data||{})
+      };
+
+      Object.entries(fields).forEach(([name,value])=>{
+        const input=document.createElement("input");
+        input.type="hidden";
+        input.name=name;
+        input.value=value;
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+
+      return new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>{
+          this.pending.delete(id);
+          try{iframe.remove()}catch(_){}
+          reject(new Error("No se recibió respuesta de Apps Script. Verifica que el backend esté actualizado e implementado."));
+        },30000);
+
+        this.pending.set(id,{resolve,reject,timer,iframe});
+
+        try{
+          form.submit();
+        }catch(ex){
+          clearTimeout(timer);
+          this.pending.delete(id);
+          try{iframe.remove()}catch(_){}
+          reject(new Error("No fue posible enviar la solicitud al servidor."));
+        }finally{
+          form.remove();
+        }
+      });
     }
   }
   let bridge;
@@ -37,8 +102,15 @@
   const clearErr=el=>{el.classList.add("hidden");el.textContent=""};
 
   async function boot(){
-    try{bridge=new BridgeClient(cfg.bridgeUrl);await bridge.init();window.EOE_BRIDGE=bridge;window.dispatchEvent(new CustomEvent("eoe:bridge-ready"));$("#connectionBadge")?.classList.add("ok")}
-    catch(e){$("#loginBtn").disabled=true;err($("#loginError"),e.message)}
+    try{
+      bridge=new BridgeClient(cfg.bridgeUrl);
+      window.EOE_BRIDGE=bridge;
+      window.dispatchEvent(new CustomEvent("eoe:bridge-ready"));
+      await bridge.init();
+      $("#connectionBadge")?.classList.add("ok");
+    }catch(e){
+      err($("#loginError"),e.message);
+    }
     const token=sessionStorage.getItem("eoe_session");
     if(token){state.session=token;try{await loadDashboard()}catch(_){sessionStorage.removeItem("eoe_session");state.session=null}}
   }

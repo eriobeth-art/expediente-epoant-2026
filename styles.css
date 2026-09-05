@@ -100,3 +100,49 @@ dialog{width:min(920px,calc(100% - 28px));max-height:90vh;border:0;border-radius
   .detail-grid,.closure-grid{grid-template-columns:1fr}
 }
 @media(max-width:520px){.stat-grid{grid-template-columns:1fr 1fr}.stat strong{font-size:1.6rem}}
+
+
+/* ===== V2.0.2 · LOGO OFICIAL EPOANT ===== */
+.epoant-logo-login{
+  width:118px;
+  height:118px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ffffff;
+  border-radius:24px;
+  padding:10px;
+  box-shadow:0 14px 32px rgba(0,0,0,.18);
+  margin-bottom:24px;
+}
+.epoant-logo-login img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.epoant-logo-mini{
+  width:48px;
+  height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ffffff;
+  border-radius:12px;
+  padding:4px;
+  box-shadow:0 4px 12px rgba(18,45,75,.12);
+}
+.epoant-logo-mini img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+@media(max-width:760px){
+  .epoant-logo-login{
+    width:94px;
+    height:94px;
+    border-radius:20px;
+    margin-bottom:18px;
+  }
+}
