@@ -37,7 +37,7 @@
   const clearErr=el=>{el.classList.add("hidden");el.textContent=""};
 
   async function boot(){
-    try{bridge=new BridgeClient(cfg.bridgeUrl);await bridge.init();$("#connectionBadge")?.classList.add("ok")}
+    try{bridge=new BridgeClient(cfg.bridgeUrl);await bridge.init();window.EOE_BRIDGE=bridge;window.dispatchEvent(new CustomEvent("eoe:bridge-ready"));$("#connectionBadge")?.classList.add("ok")}
     catch(e){$("#loginBtn").disabled=true;err($("#loginError"),e.message)}
     const token=sessionStorage.getItem("eoe_session");
     if(token){state.session=token;try{await loadDashboard()}catch(_){sessionStorage.removeItem("eoe_session");state.session=null}}

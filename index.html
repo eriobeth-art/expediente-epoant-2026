@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0b3b73">
   <title>Expediente de Orientación Educativa | EPOANT</title>
-  <meta name="description" content="Expediente de Orientación Educativa para estudiantes de la EPOANT.">
+  <meta name="description" content="Expediente de Orientación Educativa de la EPOANT.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -18,12 +18,12 @@
         <div>
           <p class="eyebrow">EPOANT · TURNO MATUTINO</p>
           <h1>Expediente de Orientación Educativa</h1>
-          <p class="lead">Completa tus instrumentos de orientación y consulta tu avance desde un solo espacio.</p>
+          <p class="lead">Seguimiento integral del estudiante y gestión de Orientación Educativa.</p>
         </div>
         <div class="feature-list">
-          <div><span>✓</span> Acceso personal con CURP y PIN</div>
-          <div><span>✓</span> Avance secuencial del expediente</div>
-          <div><span>✓</span> Resguardo de evidencias en Google Drive</div>
+          <div><span>✓</span> Acceso personal del estudiante</div>
+          <div><span>✓</span> Avance secuencial y evidencias PDF</div>
+          <div><span>✓</span> Panel administrativo protegido</div>
         </div>
       </div>
 
@@ -32,25 +32,53 @@
           <div class="seal small">E</div>
           <div><strong>EPOANT</strong><small>Orientación Educativa</small></div>
         </div>
-        <h2>Acceso del estudiante</h2>
-        <p class="muted">Ingresa tu CURP y el PIN asignado.</p>
-        <form id="loginForm">
-          <label>CURP
-            <input id="loginCurp" name="curp" autocomplete="username" maxlength="18" required placeholder="18 caracteres">
-          </label>
-          <label>PIN
-            <div class="pin-row">
-              <input id="loginPin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" required placeholder="6 dígitos">
-              <button class="icon-btn" type="button" id="togglePin" aria-label="Mostrar PIN">👁</button>
-            </div>
-          </label>
-          <button class="btn primary full" type="submit" id="loginBtn">Ingresar</button>
-          <div id="loginError" class="alert error hidden" role="alert"></div>
-        </form>
-        <p class="privacy-note">Tu información se utiliza exclusivamente para fines de Orientación Educativa. No compartas tu PIN.</p>
+
+        <div class="role-switch" role="tablist" aria-label="Tipo de acceso">
+          <button type="button" class="role-tab active" id="studentModeBtn">Estudiante</button>
+          <button type="button" class="role-tab" id="adminModeBtn">Administrador</button>
+        </div>
+
+        <div id="studentLoginPanel">
+          <h2>Acceso del estudiante</h2>
+          <p class="muted">Ingresa tu CURP y el PIN asignado.</p>
+          <form id="loginForm">
+            <label>CURP
+              <input id="loginCurp" name="curp" autocomplete="username" maxlength="18" required placeholder="18 caracteres">
+            </label>
+            <label>PIN
+              <div class="pin-row">
+                <input id="loginPin" name="pin" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" required placeholder="6 dígitos">
+                <button class="icon-btn" type="button" id="togglePin" aria-label="Mostrar PIN">👁</button>
+              </div>
+            </label>
+            <button class="btn primary full" type="submit" id="loginBtn">Ingresar</button>
+            <div id="loginError" class="alert error hidden" role="alert"></div>
+          </form>
+          <p class="privacy-note">Tu información se utiliza exclusivamente para fines de Orientación Educativa. No compartas tu PIN.</p>
+        </div>
+
+        <div id="adminLoginPanel" class="hidden">
+          <h2>Acceso administrador</h2>
+          <p class="muted">Acceso exclusivo del personal autorizado de Orientación Educativa.</p>
+          <form id="adminLoginForm">
+            <label>Usuario
+              <input id="adminUser" autocomplete="username" required placeholder="Usuario administrador">
+            </label>
+            <label>Contraseña
+              <div class="pin-row">
+                <input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Contraseña">
+                <button class="icon-btn" type="button" id="toggleAdminPassword" aria-label="Mostrar contraseña">👁</button>
+              </div>
+            </label>
+            <button class="btn primary full" type="submit" id="adminLoginBtn">Ingresar como administrador</button>
+            <div id="adminLoginError" class="alert error hidden" role="alert"></div>
+          </form>
+          <p class="privacy-note">La contraseña administrativa se valida en Google Apps Script y nunca se almacena en GitHub.</p>
+        </div>
       </div>
     </section>
 
+    <!-- PORTAL DEL ESTUDIANTE -->
     <section id="appView" class="hidden app-view">
       <header class="topbar">
         <div class="brand-inline">
@@ -96,6 +124,68 @@
         <span>Servicio de Orientación Educativa · Dr. Eriobeth Vargas Hernández</span>
       </footer>
     </section>
+
+    <!-- PANEL ADMINISTRADOR -->
+    <section id="adminView" class="hidden app-view admin-view">
+      <header class="topbar admin-topbar">
+        <div class="brand-inline">
+          <div class="seal small">E</div>
+          <div><strong>EPOANT</strong><small>Panel Administrador · Orientación Educativa</small></div>
+        </div>
+        <div class="top-actions">
+          <span class="badge ok">Administración</span>
+          <button class="btn ghost" id="adminChangePasswordBtn">Cambiar contraseña</button>
+          <button class="btn ghost" id="adminLogoutBtn">Cerrar sesión</button>
+        </div>
+      </header>
+
+      <section class="admin-hero card">
+        <div>
+          <p class="eyebrow">CONTROL DEL EXPEDIENTE</p>
+          <h2>Panel Administrador</h2>
+          <p class="muted" id="adminWelcome">Gestión de estudiantes, avances, documentos y cierres.</p>
+        </div>
+        <button class="btn primary" id="syncStudentsBtn">Sincronizar estudiantes</button>
+      </section>
+
+      <div class="stat-grid">
+        <article class="stat card"><span>Estudiantes activos</span><strong id="statActive">0</strong></article>
+        <article class="stat card"><span>Expedientes completos</span><strong id="statComplete">0</strong></article>
+        <article class="stat card"><span>En proceso</span><strong id="statPending">0</strong></article>
+        <article class="stat card"><span>Avance promedio</span><strong id="statAverage">0%</strong></article>
+      </div>
+
+      <section class="card admin-table-card">
+        <div class="admin-toolbar">
+          <div>
+            <p class="eyebrow">ESTUDIANTES</p>
+            <h3>Seguimiento del avance</h3>
+          </div>
+          <div class="filters">
+            <input id="adminSearch" type="search" placeholder="Buscar estudiante o expediente">
+            <select id="adminGradeFilter"><option value="">Todos los grados</option></select>
+            <select id="adminGroupFilter"><option value="">Todos los grupos</option></select>
+            <select id="adminProgressFilter">
+              <option value="">Todos los avances</option>
+              <option value="complete">Completos</option>
+              <option value="pending">En proceso</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="admin-table">
+            <thead><tr><th>Estudiante</th><th>Grado / Grupo</th><th>Expediente</th><th>Avance</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="adminStudentsBody"></tbody>
+          </table>
+        </div>
+        <div id="adminEmpty" class="empty-state hidden">No hay estudiantes que coincidan con los filtros.</div>
+      </section>
+
+      <footer>
+        <strong>Escuela Preparatoria Oficial Anexa a la Normal de Tejupilco</strong>
+        <span>Panel de uso exclusivo para Orientación Educativa</span>
+      </footer>
+    </section>
   </main>
 
   <dialog id="activityDialog">
@@ -113,10 +203,40 @@
     </form>
   </dialog>
 
+  <dialog id="adminStudentDialog">
+    <div class="dialog-shell admin-detail-shell">
+      <div class="dialog-head">
+        <div><p class="eyebrow">EXPEDIENTE INDIVIDUAL</p><h2 id="adminStudentTitle">—</h2></div>
+        <button class="icon-btn close" type="button" id="closeAdminStudentDialog" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="adminStudentBody" class="dialog-body"></div>
+    </div>
+  </dialog>
+
+  <dialog id="adminPasswordDialog">
+    <form class="dialog-shell compact-dialog" id="adminPasswordForm">
+      <div class="dialog-head">
+        <div><p class="eyebrow">SEGURIDAD</p><h2>Cambiar contraseña</h2></div>
+        <button class="icon-btn close" type="button" id="closeAdminPasswordDialog">✕</button>
+      </div>
+      <div class="dialog-body">
+        <label>Contraseña actual<input type="password" id="currentAdminPassword" required></label>
+        <label>Nueva contraseña<input type="password" id="newAdminPassword" minlength="8" required></label>
+        <label>Confirmar nueva contraseña<input type="password" id="confirmAdminPassword" minlength="8" required></label>
+        <div id="adminPasswordError" class="alert error hidden"></div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" id="cancelAdminPassword">Cancelar</button>
+        <button type="submit" class="btn primary">Actualizar contraseña</button>
+      </div>
+    </form>
+  </dialog>
+
   <div id="toast" class="toast hidden" role="status"></div>
 
   <script src="config.js"></script>
   <script src="forms.js"></script>
   <script src="app.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
