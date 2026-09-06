@@ -100,6 +100,23 @@
     .busy{position:fixed;inset:0;background:rgba(244,247,251,.82);backdrop-filter:blur(2px);z-index:100;display:none;place-items:center}.busy.show{display:grid}.busyBox{background:white;border:1px solid var(--line);box-shadow:var(--shadow);padding:16px 20px;border-radius:12px;font-weight:900;color:var(--navy)}
     .toast{position:fixed;right:18px;bottom:18px;z-index:120;background:#173f68;color:white;padding:11px 14px;border-radius:10px;font-size:11px;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}
     @media(max-width:900px){.sidebar{position:static;width:auto}.sideFoot{display:none}.main{margin-left:0}.topbar{position:static}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.formGrid{grid-template-columns:1fr}.wide{grid-column:auto}.memberRow{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.progressBox{text-align:left;margin-top:14px}}
+  
+    /* V2.3 · organización administrativa por grupo + identidad EPOANT */
+    .seal{background:#fff;border:1px solid #dbe6f0;overflow:hidden;padding:7px}
+    .seal img{width:100%;height:100%;object-fit:contain;display:block}
+    .brand .miniLogo{background:#fff;overflow:hidden;padding:4px}
+    .brand .miniLogo img{width:100%;height:100%;object-fit:contain;display:block}
+    .groupToolbar{display:grid;grid-template-columns:minmax(190px,260px) minmax(220px,1fr);gap:10px;margin-bottom:14px}
+    .groupToolbar select,.groupToolbar input{width:100%;border:1px solid #cfdbe6;border-radius:10px;padding:10px 12px;background:#fff;color:var(--text)}
+    .groupSummary{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
+    .groupChip{border:1px solid #d6e2ec;background:#f6f9fc;color:#385b79;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:850}
+    .groupSection{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0;background:#fff}
+    .groupHeader{padding:12px 14px;background:linear-gradient(90deg,#eef5fb,#f8fbfd);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .groupHeader h4{margin:0;color:var(--navy);font-size:13px}
+    .groupMeta{display:flex;gap:7px;flex-wrap:wrap;font-size:9px;color:#60758b;font-weight:800}
+    .groupMeta span{background:#fff;border:1px solid #dce5ee;padding:5px 8px;border-radius:999px}
+    .groupEmpty{padding:18px;text-align:center;color:var(--muted);font-size:11px}
+    @media(max-width:760px){.groupToolbar{grid-template-columns:1fr}.groupHeader{align-items:flex-start;flex-direction:column}}
   </style>
 
   <script src="config.js"></script>
@@ -108,7 +125,7 @@
 <body>
 <div id="loginScreen" class="loginScreen">
   <div class="loginCard">
-    <div class="seal">EOE</div>
+    <div class="seal"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
     <h1>Expediente de Orientación Educativa</h1>
     <p>EPOANT · Servicio de Orientación Educativa</p>
     <div style="margin:8px 0 14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#60758b">VERSIÓN 2.2.0 · EDUPSIC + APPS SCRIPT</div>
@@ -135,7 +152,7 @@
 <div id="app" class="app hidden">
   <aside class="sidebar">
     <div class="brand">
-      <div class="miniLogo">EOE</div>
+      <div class="miniLogo"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
       <h2>Expediente de Orientación Educativa</h2>
       <p>EPOANT · Gestión integral de formatos, entrevistas, test y seguimiento.</p>
     </div>
@@ -238,14 +255,18 @@
             </div>
           </div>
           <div class="panelBody">
-            <div style="overflow:auto"><table>
-              <thead><tr><th>Estudiante</th><th>Grupo</th><th>Avance</th><th>Seguimiento</th><th>Cierre</th><th>Última</th><th>Siguiente</th><th>Acciones</th></tr></thead>
-              <tbody id="adminRows"></tbody>
-            </table></div>
+            <div class="groupToolbar">
+              <select id="adminGroupFilter" onchange="applyAdminFilters()">
+                <option value="ALL">Todos los grupos</option>
+              </select>
+              <input id="adminSearch" type="search" placeholder="Buscar estudiante por nombre o folio…" oninput="applyAdminFilters()">
+            </div>
+            <div id="adminGroupSummary" class="groupSummary"></div>
+            <div id="adminGroups"></div>
           </div>
         </div>
         <div class="notice" style="margin-top:14px">
-          V2.1 sincroniza estudiantes desde Datos de Identificación. WhatsApp abre un mensaje prellenado. El envío automático sin intervención requerirá integrar WhatsApp Business Cloud API.
+          V2.3 organiza los estudiantes por grado y grupo y sincroniza desde Datos de Identificación. WhatsApp abre un mensaje prellenado. El envío automático sin intervención requerirá integrar WhatsApp Business Cloud API.
         </div>
       </section>
     </div>
@@ -1315,11 +1336,66 @@ function loadAdmin(){
   busy(true,'Cargando panel…');
   gs('obtenerPanelAdmin',[SESSION.token],r=>{busy(false);renderAdmin(r)});
 }
+let ADMIN_CACHE=null;
 function renderAdmin(r){
-  document.getElementById('aTotal').textContent=r.total;document.getElementById('aComplete').textContent=r.completos;document.getElementById('aProcess').textContent=r.enProceso;document.getElementById('aZero').textContent=r.sinIniciar;
-  document.getElementById('adminRows').innerHTML=r.estudiantes.map(s=>`<tr>
+  ADMIN_CACHE=r;
+  document.getElementById('aTotal').textContent=r.total;
+  document.getElementById('aComplete').textContent=r.completos;
+  document.getElementById('aProcess').textContent=r.enProceso;
+  document.getElementById('aZero').textContent=r.sinIniciar;
+
+  const select=document.getElementById('adminGroupFilter');
+  const current=select.value||'ALL';
+  const groups=groupAdminStudents_(r.estudiantes||[]);
+  select.innerHTML='<option value="ALL">Todos los grupos</option>'+groups.map(g=>
+    `<option value="${esc(g.key)}">${esc(g.label)} · ${g.items.length} estudiantes</option>`
+  ).join('');
+  select.value=[...select.options].some(o=>o.value===current)?current:'ALL';
+  applyAdminFilters();
+}
+function groupAdminStudents_(students){
+  const map={};
+  (students||[]).forEach(s=>{
+    const grado=String(s.grado||'').trim()||'—';
+    const grupo=String(s.grupo||'').trim()||'—';
+    const key=grado+'|'+grupo;
+    if(!map[key])map[key]={key:key,grado:grado,grupo:grupo,label:`${grado}° · Grupo ${grupo}`,items:[]};
+    map[key].items.push(s);
+  });
+  return Object.values(map).sort((a,b)=>{
+    const ga=parseInt(a.grado,10),gb=parseInt(b.grado,10);
+    if(!Number.isNaN(ga)&&!Number.isNaN(gb)&&ga!==gb)return ga-gb;
+    return String(a.grupo).localeCompare(String(b.grupo),'es',{numeric:true,sensitivity:'base'});
+  });
+}
+function applyAdminFilters(){
+  if(!ADMIN_CACHE)return;
+  const selected=document.getElementById('adminGroupFilter').value||'ALL';
+  const q=String(document.getElementById('adminSearch').value||'').trim().toLowerCase();
+  let groups=groupAdminStudents_(ADMIN_CACHE.estudiantes||[]);
+  if(selected!=='ALL')groups=groups.filter(g=>g.key===selected);
+  groups=groups.map(g=>({...g,items:g.items.filter(s=>{
+    if(!q)return true;
+    return [s.nombre,s.id,s.grado,s.grupo].some(v=>String(v||'').toLowerCase().includes(q));
+  })})).filter(g=>g.items.length);
+
+  document.getElementById('adminGroupSummary').innerHTML=groups.map(g=>{
+    const completos=g.items.filter(s=>s.progreso===100).length;
+    const proceso=g.items.filter(s=>s.progreso>0&&s.progreso<100).length;
+    const sin=g.items.filter(s=>s.progreso===0).length;
+    return `<span class="groupChip">${esc(g.label)} · ${g.items.length} · ✓ ${completos} · ↻ ${proceso} · ○ ${sin}</span>`;
+  }).join('');
+
+  const box=document.getElementById('adminGroups');
+  if(!groups.length){box.innerHTML='<div class="groupEmpty">No se encontraron estudiantes con los filtros seleccionados.</div>';return;}
+  box.innerHTML=groups.map(g=>renderAdminGroup_(g)).join('');
+}
+function renderAdminGroup_(g){
+  const completos=g.items.filter(s=>s.progreso===100).length;
+  const proceso=g.items.filter(s=>s.progreso>0&&s.progreso<100).length;
+  const sin=g.items.filter(s=>s.progreso===0).length;
+  const rows=g.items.slice().sort((a,b)=>String(a.nombre||'').localeCompare(String(b.nombre||''),'es',{sensitivity:'base'})).map(s=>`<tr>
     <td><b>${esc(s.nombre)}</b><br><span class="sub">${esc(s.id)}</span></td>
-    <td>${esc(s.grado)}° ${esc(s.grupo)}</td>
     <td><b>${s.progreso}%</b></td>
     <td>${esc(s.prioridad||'—')}</td>
     <td>${s.cierre&&s.cierre.constanciaHabilitada==='SI'
@@ -1329,6 +1405,16 @@ function renderAdmin(r){
     <td>${esc(s.siguiente)}</td>
     <td><button class="btn" onclick="openAdminFile('${esc(s.id)}')">Expediente</button> ${s.whatsappUrl?`<button class="btn" onclick="window.open('${esc(s.whatsappUrl)}','_blank')">WhatsApp</button>`:''}</td>
   </tr>`).join('');
+  return `<section class="groupSection">
+    <div class="groupHeader">
+      <h4>${esc(g.label)}</h4>
+      <div class="groupMeta"><span>${g.items.length} estudiantes</span><span>100 %: ${completos}</span><span>En proceso: ${proceso}</span><span>Sin iniciar: ${sin}</span></div>
+    </div>
+    <div style="overflow:auto"><table>
+      <thead><tr><th>Estudiante</th><th>Avance</th><th>Seguimiento</th><th>Cierre</th><th>Última</th><th>Siguiente</th><th>Acciones</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+  </section>`;
 }
 function openAdminFile(id){
   busy(true,'Abriendo expediente…');
