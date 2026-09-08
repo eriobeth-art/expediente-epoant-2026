@@ -1,22 +1,24 @@
-EPOANT · EXPEDIENTE + CUMPLIMIENTO · FILTRO POR GRUPOS
+EPOANT · EXPEDIENTE · GITHUB IFRAME ESTABLE
 
-CAMBIO:
-Se restaura el selector de grupo en Administración > Control de expedientes.
+OBJETIVO
+Evitar el bloqueo de inicio de sesión del bridge GitHub -> Apps Script.
 
-Ahora puedes elegir:
-- Todos los grupos
-- 1° 1
-- 1° 2
-- cualquier otro grado/grupo que exista en la base
+ARQUITECTURA
+GitHub/expediente.edupsic.com muestra dentro de un iframe la aplicación publicada
+por Apps Script. La aplicación completa sigue ejecutándose dentro de Apps Script,
+por lo que google.script.run funciona de forma nativa.
 
-Al seleccionar un grupo:
-- solo aparecen los estudiantes de ese grupo;
-- las tarjetas de total, 100 % completo, en proceso y sin iniciar se recalculan para ese grupo;
-- no se altera el módulo de Seguimiento de Cumplimiento Académico.
+IMPORTANTE
+- NO cambies Code.gs.
+- NO cambies Index.html de Apps Script.
+- El filtro por grupos y Cumplimiento ya deben estar en el Index de Apps Script.
+- En GitHub sustituye únicamente index.html y conserva CNAME/.nojekyll.
 
-PARA expediente.edupsic.com:
-Solo necesitas actualizar el index.html de GitHub con el del folder github.
-No necesitas cambiar Code.gs.
-
-El Index.html de Apps Script se incluye únicamente para mantener la misma interfaz
-si utilizas el acceso directo de contingencia de Apps Script.
+INSTALACIÓN EN GITHUB
+1. Sube index.html, CNAME y .nojekyll a la raíz del repositorio.
+2. Sustituye el index.html actual.
+3. Commit changes.
+4. Espera 1-3 minutos.
+5. Abre https://expediente.edupsic.com y fuerza recarga:
+   Mac: Cmd+Shift+R
+   Windows: Ctrl+Shift+R
