@@ -1,0 +1,22 @@
+EPOANT · EXPEDIENTE + CUMPLIMIENTO · FILTRO POR GRUPOS
+
+CAMBIO:
+Se restaura el selector de grupo en Administración > Control de expedientes.
+
+Ahora puedes elegir:
+- Todos los grupos
+- 1° 1
+- 1° 2
+- cualquier otro grado/grupo que exista en la base
+
+Al seleccionar un grupo:
+- solo aparecen los estudiantes de ese grupo;
+- las tarjetas de total, 100 % completo, en proceso y sin iniciar se recalculan para ese grupo;
+- no se altera el módulo de Seguimiento de Cumplimiento Académico.
+
+PARA expediente.edupsic.com:
+Solo necesitas actualizar el index.html de GitHub con el del folder github.
+No necesitas cambiar Code.gs.
+
+El Index.html de Apps Script se incluye únicamente para mantener la misma interfaz
+si utilizas el acceso directo de contingencia de Apps Script.

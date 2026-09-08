@@ -100,35 +100,15 @@
     .busy{position:fixed;inset:0;background:rgba(244,247,251,.82);backdrop-filter:blur(2px);z-index:100;display:none;place-items:center}.busy.show{display:grid}.busyBox{background:white;border:1px solid var(--line);box-shadow:var(--shadow);padding:16px 20px;border-radius:12px;font-weight:900;color:var(--navy)}
     .toast{position:fixed;right:18px;bottom:18px;z-index:120;background:#173f68;color:white;padding:11px 14px;border-radius:10px;font-size:11px;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}
     @media(max-width:900px){.sidebar{position:static;width:auto}.sideFoot{display:none}.main{margin-left:0}.topbar{position:static}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.formGrid{grid-template-columns:1fr}.wide{grid-column:auto}.memberRow{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.progressBox{text-align:left;margin-top:14px}}
-  
-    /* V2.3 · organización administrativa por grupo + identidad EPOANT */
-    .seal{background:#fff;border:1px solid #dbe6f0;overflow:hidden;padding:7px}
-    .seal img{width:100%;height:100%;object-fit:contain;display:block}
-    .brand .miniLogo{background:#fff;overflow:hidden;padding:4px}
-    .brand .miniLogo img{width:100%;height:100%;object-fit:contain;display:block}
-    .groupToolbar{display:grid;grid-template-columns:minmax(190px,260px) minmax(220px,1fr);gap:10px;margin-bottom:14px}
-    .groupToolbar select,.groupToolbar input{width:100%;border:1px solid #cfdbe6;border-radius:10px;padding:10px 12px;background:#fff;color:var(--text)}
-    .groupSummary{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px}
-    .groupChip{border:1px solid #d6e2ec;background:#f6f9fc;color:#385b79;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:850}
-    .groupSection{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:14px 0;background:#fff}
-    .groupHeader{padding:12px 14px;background:linear-gradient(90deg,#eef5fb,#f8fbfd);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .groupHeader h4{margin:0;color:var(--navy);font-size:13px}
-    .groupMeta{display:flex;gap:7px;flex-wrap:wrap;font-size:9px;color:#60758b;font-weight:800}
-    .groupMeta span{background:#fff;border:1px solid #dce5ee;padding:5px 8px;border-radius:999px}
-    .groupEmpty{padding:18px;text-align:center;color:var(--muted);font-size:11px}
-    @media(max-width:760px){.groupToolbar{grid-template-columns:1fr}.groupHeader{align-items:flex-start;flex-direction:column}}
   </style>
-
-  <script src="config.js"></script>
-  <script src="bridge-client.js"></script>
 </head>
 <body>
 <div id="loginScreen" class="loginScreen">
   <div class="loginCard">
-    <div class="seal"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
+    <div class="seal">EOE</div>
     <h1>Expediente de Orientación Educativa</h1>
     <p>EPOANT · Servicio de Orientación Educativa</p>
-    <div style="margin:8px 0 14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#60758b">VERSIÓN 2.2.0 · EDUPSIC + APPS SCRIPT</div>
+    <div style="margin:8px 0 14px;font-size:10px;font-weight:900;letter-spacing:.08em;color:#60758b">VERSIÓN 2.2.0 · APPS SCRIPT DIRECTO</div>
     <div class="loginTabs">
       <button id="tabStu" class="active" onclick="setLoginMode('student')">Estudiante</button>
       <button id="tabAdm" onclick="setLoginMode('admin')">Administrador</button>
@@ -144,7 +124,7 @@
       <div class="field"><label>Usuario administrador</label><input id="admUser" placeholder="Usuario"></div>
       <div class="field"><label>Contraseña</label><input id="admPass" type="password" placeholder="Contraseña"></div>
       <button class="btn primary" style="width:100%" onclick="loginAdmin()">Ingresar a administración</button>
-      <div class="demo">Acceso administrativo V2.2 validado en el backend privado de Apps Script.</div>
+      <div class="demo">Acceso administrativo V2.2 validado directamente en el servidor.</div>
     </div>
   </div>
 </div>
@@ -152,7 +132,7 @@
 <div id="app" class="app hidden">
   <aside class="sidebar">
     <div class="brand">
-      <div class="miniLogo"><img src="logo-epoant.png" alt="Logo EPOANT"></div>
+      <div class="miniLogo">EOE</div>
       <h2>Expediente de Orientación Educativa</h2>
       <p>EPOANT · Gestión integral de formatos, entrevistas, test y seguimiento.</p>
     </div>
@@ -205,6 +185,20 @@
           </div>
         </div>
 
+
+        <div id="complianceBox" class="panel" style="margin-top:18px">
+          <div class="panelHead">
+            <div>
+              <h3>Mi seguimiento de cumplimiento académico</h3>
+              <div class="sub">Tareas, materiales, trabajos y compromisos notificados a tutor</div>
+            </div>
+            <span id="complianceStatus" class="status work">Actualizando</span>
+          </div>
+          <div class="panelBody" id="complianceBody">
+            <div class="notice">Consultando seguimiento de cumplimiento…</div>
+          </div>
+        </div>
+
         <div id="conductBox" class="panel" style="margin-top:18px">
           <div class="panelHead">
             <div>
@@ -249,24 +243,26 @@
         <div class="panel">
           <div class="panelHead">
             <div><h3>Control de expedientes</h3><div class="sub">Avance, documentos y recordatorios</div></div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <label style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:800;color:#496377">
+                Grupo
+                <select id="adminGroupFilter" onchange="filtrarAdminPorGrupo()" style="min-width:150px;border:1px solid #cfdbe6;border-radius:10px;padding:9px 11px;background:#fff;color:#173b5e">
+                  <option value="">Todos los grupos</option>
+                </select>
+              </label>
               <button class="btn" onclick="syncStudents()">↻ Sincronizar estudiantes</button>
               <button class="btn" onclick="loadAdmin()">Actualizar</button>
             </div>
           </div>
           <div class="panelBody">
-            <div class="groupToolbar">
-              <select id="adminGroupFilter" onchange="applyAdminFilters()">
-                <option value="ALL">Todos los grupos</option>
-              </select>
-              <input id="adminSearch" type="search" placeholder="Buscar estudiante por nombre o folio…" oninput="applyAdminFilters()">
-            </div>
-            <div id="adminGroupSummary" class="groupSummary"></div>
-            <div id="adminGroups"></div>
+            <div style="overflow:auto"><table>
+              <thead><tr><th>Estudiante</th><th>Grupo</th><th>Avance</th><th>Seguimiento</th><th>Cierre</th><th>Última</th><th>Siguiente</th><th>Acciones</th></tr></thead>
+              <tbody id="adminRows"></tbody>
+            </table></div>
           </div>
         </div>
         <div class="notice" style="margin-top:14px">
-          V2.3 organiza los estudiantes por grado y grupo y sincroniza desde Datos de Identificación. WhatsApp abre un mensaje prellenado. El envío automático sin intervención requerirá integrar WhatsApp Business Cloud API.
+          V2.1 sincroniza estudiantes desde Datos de Identificación. WhatsApp abre un mensaje prellenado. El envío automático sin intervención requerirá integrar WhatsApp Business Cloud API.
         </div>
       </section>
     </div>
@@ -563,9 +559,73 @@ function hideLoginError(){document.getElementById('loginError').style.display='n
 function busy(on,text='Procesando…'){document.getElementById('busyText').textContent=text;document.getElementById('busy').classList.toggle('show',on)}
 function toast(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2600)}
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function gs(fn,args=[],ok=()=>{},fail=(e)=>{busy(false);alert(e.message||e)}){
-  let r=google.script.run.withSuccessHandler(ok).withFailureHandler(fail);
-  r[fn](...args);
+const EPOANT_BRIDGE_URL='https://script.google.com/macros/s/AKfycbyWDG7dnYQ6VgNLXG4UCInoFr0b9WxZtLVUVJE3tnQdp8A0I222vV4j1TgEPPvTlag/exec?bridge=1';
+const EPOANT_RPC_CHANNEL=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():('ch_'+Date.now()+'_'+Math.random());
+const EPOANT_RPC_PENDING=new Map();
+const EPOANT_RPC_QUEUE=[];
+let EPOANT_BRIDGE_READY=false;
+
+function epoantBridgeFrame(){
+  return document.getElementById('epoantGasBridge');
+}
+function epoantFlushQueue(){
+  if(!EPOANT_BRIDGE_READY)return;
+  while(EPOANT_RPC_QUEUE.length){
+    const x=EPOANT_RPC_QUEUE.shift();
+    epoantEnviarRpc(x);
+  }
+}
+function epoantEnviarRpc(x){
+  const frame=epoantBridgeFrame();
+  if(!frame||!frame.contentWindow){
+    x.fail({message:'No se pudo conectar con el servidor del Expediente.'});
+    return;
+  }
+  const id='rpc_'+Date.now()+'_'+Math.random().toString(36).slice(2);
+  const timer=setTimeout(()=>{
+    if(EPOANT_RPC_PENDING.has(id)){
+      EPOANT_RPC_PENDING.delete(id);
+      x.fail({message:'El servidor tardó demasiado en responder. Intenta nuevamente.'});
+    }
+  },45000);
+  EPOANT_RPC_PENDING.set(id,{ok:x.ok,fail:x.fail,timer});
+  frame.contentWindow.postMessage({
+    type:'EPOANT_GAS_CALL',channel:EPOANT_RPC_CHANNEL,id:id,method:x.fn,args:x.args||[]
+  },'*');
+}
+window.addEventListener('message',function(ev){
+  const frame=epoantBridgeFrame();
+  if(!frame||ev.source!==frame.contentWindow)return;
+  const m=ev.data||{};
+  if(m.type==='EPOANT_BRIDGE_BOOT'||m.type==='EPOANT_BRIDGE_READY'){
+    EPOANT_BRIDGE_READY=true;
+    epoantFlushQueue();
+    return;
+  }
+  if(m.type==='EPOANT_GAS_RESULT'&&m.channel===EPOANT_RPC_CHANNEL&&m.id){
+    const p=EPOANT_RPC_PENDING.get(m.id);
+    if(!p)return;
+    clearTimeout(p.timer);
+    EPOANT_RPC_PENDING.delete(m.id);
+    if(m.ok)p.ok(m.result);
+    else p.fail(m.error||{message:'Error del servidor.'});
+  }
+});
+function epoantBridgeHello(){
+  const frame=epoantBridgeFrame();
+  if(frame&&frame.contentWindow){
+    frame.contentWindow.postMessage({type:'EPOANT_BRIDGE_HELLO',channel:EPOANT_RPC_CHANNEL},'*');
+  }
+}
+setInterval(epoantBridgeHello,1200);
+
+function gs(fn,args=[],ok=()=>{},fail=(e)=>{busy(false);alert((e&&e.message)||e)}){
+  const x={fn:fn,args:args,ok:ok,fail:fail};
+  if(EPOANT_BRIDGE_READY)epoantEnviarRpc(x);
+  else{
+    EPOANT_RPC_QUEUE.push(x);
+    epoantBridgeHello();
+  }
 }
 
 function loginStudent(){
@@ -608,6 +668,65 @@ function goPage(p,b){
   document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));if(b)b.classList.add('active');
 }
 
+
+function renderCumplimientoEstudiante(c){
+  c=c||{};
+  const st=document.getElementById('complianceStatus');
+  const body=document.getElementById('complianceBody');
+  if(!st||!body)return;
+
+  const labels={
+    SIN_REGISTROS:'Sin pendientes',
+    AL_DIA:'Al día',
+    SEGUIMIENTO:'Seguimiento',
+    ATENCION:'Atención',
+    CRITICO:'Crítico'
+  };
+  const cls=c.nivel==='AL_DIA'||c.nivel==='SIN_REGISTROS'?'ok':
+    (c.nivel==='SEGUIMIENTO'?'work':'lock');
+  st.className='status '+cls;
+  st.textContent=labels[c.nivel]||'Seguimiento';
+
+  if(!c.vinculado){
+    body.innerHTML=`<div class="notice">${esc(c.mensaje||'No fue posible consultar el seguimiento de cumplimiento.')}</div>`;
+    return;
+  }
+  if(!c.total){
+    body.innerHTML=`
+      <div class="notice"><b>Sin incumplimientos académicos registrados.</b> ${esc(c.mensaje||'')}</div>
+      <div class="resultBox"><p>Cuando exista una notificación por tarea, material, trabajo o compromiso académico, su seguimiento aparecerá aquí.</p></div>`;
+    return;
+  }
+
+  const rows=(c.registros||[]).map(x=>`
+    <tr>
+      <td>${esc(x.asignatura||'—')}</td>
+      <td>${esc(x.tipo||'—')}</td>
+      <td>${esc(x.actividad||'—')}</td>
+      <td><span class="status ${x.estado==='CUMPLIDO'?'ok':(x.estado==='EN_SEGUIMIENTO'?'work':'lock')}">${esc((x.estado||'PENDIENTE').replaceAll('_',' '))}</span></td>
+      <td>${esc(x.fechaLimite||'—')}</td>
+    </tr>`).join('');
+
+  body.innerHTML=`
+    <div class="notice">
+      <b>Registros:</b> ${c.total||0} ·
+      <b>Cumplidos:</b> ${c.cumplidos||0} ·
+      <b>En seguimiento:</b> ${c.enSeguimiento||0} ·
+      <b>Pendientes:</b> ${c.pendientes||0} ·
+      <b>Vencidos:</b> ${c.vencidos||0}
+    </div>
+    <div class="resultBox">
+      <h4>${c.porcentaje==null?'Seguimiento académico':('Cumplimiento registrado: '+c.porcentaje+' %')}</h4>
+      <p>${esc(c.mensaje||'')}</p>
+      ${c.afectanConstancia?`<p><b>Pendientes que requieren solventarse:</b> ${c.afectanConstancia}. Este indicador será considerado en la validación final por Orientación Educativa.</p>`:
+        '<p><b>Validación:</b> No hay pendientes abiertos que requieran solventarse para la futura constancia.</p>'}
+    </div>
+    ${rows?`<table style="margin-top:10px">
+      <thead><tr><th>Asignatura</th><th>Situación</th><th>Actividad / material</th><th>Estado</th><th>Fecha límite</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`:''}`;
+}
+
 function loadStudent(){
   busy(true,'Cargando expediente…');
   gs('obtenerPanelEstudiante',[SESSION.token],r=>{busy(false);PANEL=r;renderStudent(r)});
@@ -634,6 +753,8 @@ function renderStudent(r){
   document.getElementById('activityTable').innerHTML=`<table><thead><tr><th>#</th><th>Actividad</th><th>Estado</th><th>Folio</th><th>Documento</th></tr></thead><tbody>${
     r.actividades.map(a=>`<tr><td>${a.orden}</td><td>${esc(a.nombre)}</td><td>${esc(a.estado)}</td><td>${esc(a.folio||'—')}</td><td>${a.pdfUrl?`<a href="${esc(a.pdfUrl)}" target="_blank">Abrir PDF</a>`:'—'}</td></tr>`).join('')
   }</tbody></table>`;
+
+  renderCumplimientoEstudiante(r.cumplimiento||{});
 
   const academicStatus=document.getElementById('academicStatus');
   const academicBody=document.getElementById('academicBody');
@@ -1332,70 +1453,67 @@ function syncStudents(){
   },e=>{busy(false);alert(e.message||e)});
 }
 
+let ADMIN_PANEL_CACHE=null;
+
 function loadAdmin(){
   busy(true,'Cargando panel…');
-  gs('obtenerPanelAdmin',[SESSION.token],r=>{busy(false);renderAdmin(r)});
-}
-let ADMIN_CACHE=null;
-function renderAdmin(r){
-  ADMIN_CACHE=r;
-  document.getElementById('aTotal').textContent=r.total;
-  document.getElementById('aComplete').textContent=r.completos;
-  document.getElementById('aProcess').textContent=r.enProceso;
-  document.getElementById('aZero').textContent=r.sinIniciar;
-
-  const select=document.getElementById('adminGroupFilter');
-  const current=select.value||'ALL';
-  const groups=groupAdminStudents_(r.estudiantes||[]);
-  select.innerHTML='<option value="ALL">Todos los grupos</option>'+groups.map(g=>
-    `<option value="${esc(g.key)}">${esc(g.label)} · ${g.items.length} estudiantes</option>`
-  ).join('');
-  select.value=[...select.options].some(o=>o.value===current)?current:'ALL';
-  applyAdminFilters();
-}
-function groupAdminStudents_(students){
-  const map={};
-  (students||[]).forEach(s=>{
-    const grado=String(s.grado||'').trim()||'—';
-    const grupo=String(s.grupo||'').trim()||'—';
-    const key=grado+'|'+grupo;
-    if(!map[key])map[key]={key:key,grado:grado,grupo:grupo,label:`${grado}° · Grupo ${grupo}`,items:[]};
-    map[key].items.push(s);
-  });
-  return Object.values(map).sort((a,b)=>{
-    const ga=parseInt(a.grado,10),gb=parseInt(b.grado,10);
-    if(!Number.isNaN(ga)&&!Number.isNaN(gb)&&ga!==gb)return ga-gb;
-    return String(a.grupo).localeCompare(String(b.grupo),'es',{numeric:true,sensitivity:'base'});
+  gs('obtenerPanelAdmin',[SESSION.token],r=>{
+    busy(false);
+    ADMIN_PANEL_CACHE=r||{};
+    renderAdmin(r||{});
   });
 }
-function applyAdminFilters(){
-  if(!ADMIN_CACHE)return;
-  const selected=document.getElementById('adminGroupFilter').value||'ALL';
-  const q=String(document.getElementById('adminSearch').value||'').trim().toLowerCase();
-  let groups=groupAdminStudents_(ADMIN_CACHE.estudiantes||[]);
-  if(selected!=='ALL')groups=groups.filter(g=>g.key===selected);
-  groups=groups.map(g=>({...g,items:g.items.filter(s=>{
-    if(!q)return true;
-    return [s.nombre,s.id,s.grado,s.grupo].some(v=>String(v||'').toLowerCase().includes(q));
-  })})).filter(g=>g.items.length);
 
-  document.getElementById('adminGroupSummary').innerHTML=groups.map(g=>{
-    const completos=g.items.filter(s=>s.progreso===100).length;
-    const proceso=g.items.filter(s=>s.progreso>0&&s.progreso<100).length;
-    const sin=g.items.filter(s=>s.progreso===0).length;
-    return `<span class="groupChip">${esc(g.label)} · ${g.items.length} · ✓ ${completos} · ↻ ${proceso} · ○ ${sin}</span>`;
-  }).join('');
-
-  const box=document.getElementById('adminGroups');
-  if(!groups.length){box.innerHTML='<div class="groupEmpty">No se encontraron estudiantes con los filtros seleccionados.</div>';return;}
-  box.innerHTML=groups.map(g=>renderAdminGroup_(g)).join('');
+function claveGrupoAdmin(s){
+  return String(s.grado||'')+'|'+String(s.grupo||'');
 }
-function renderAdminGroup_(g){
-  const completos=g.items.filter(s=>s.progreso===100).length;
-  const proceso=g.items.filter(s=>s.progreso>0&&s.progreso<100).length;
-  const sin=g.items.filter(s=>s.progreso===0).length;
-  const rows=g.items.slice().sort((a,b)=>String(a.nombre||'').localeCompare(String(b.nombre||''),'es',{sensitivity:'base'})).map(s=>`<tr>
+
+function etiquetaGrupoAdmin(s){
+  return String(s.grado||'')+'° '+String(s.grupo||'');
+}
+
+function cargarOpcionesGrupoAdmin(estudiantes){
+  const sel=document.getElementById('adminGroupFilter');
+  if(!sel)return;
+  const previo=sel.value;
+  const mapa=new Map();
+  (estudiantes||[]).forEach(s=>{
+    const k=claveGrupoAdmin(s);
+    if(k!=='|')mapa.set(k,etiquetaGrupoAdmin(s));
+  });
+  const opciones=[...mapa.entries()].sort((a,b)=>{
+    const [ga,gra]=a[0].split('|'), [gb,grb]=b[0].split('|');
+    return Number(ga||0)-Number(gb||0) || String(gra).localeCompare(String(grb),'es',{numeric:true});
+  });
+  sel.innerHTML='<option value="">Todos los grupos</option>'+
+    opciones.map(([k,l])=>`<option value="${esc(k)}">${esc(l)}</option>`).join('');
+  if(opciones.some(([k])=>k===previo))sel.value=previo;
+}
+
+function filtrarAdminPorGrupo(){
+  if(ADMIN_PANEL_CACHE)renderAdmin(ADMIN_PANEL_CACHE,true);
+}
+
+function renderAdmin(r,conservarOpciones){
+  const todos=Array.isArray(r.estudiantes)?r.estudiantes:[];
+  if(!conservarOpciones)cargarOpcionesGrupoAdmin(todos);
+
+  const sel=document.getElementById('adminGroupFilter');
+  const filtro=sel?sel.value:'';
+  const lista=filtro?todos.filter(s=>claveGrupoAdmin(s)===filtro):todos;
+
+  const completos=lista.filter(s=>Number(s.progreso||0)>=100).length;
+  const sinIniciar=lista.filter(s=>Number(s.progreso||0)<=0).length;
+  const enProceso=Math.max(0,lista.length-completos-sinIniciar);
+
+  document.getElementById('aTotal').textContent=lista.length;
+  document.getElementById('aComplete').textContent=completos;
+  document.getElementById('aProcess').textContent=enProceso;
+  document.getElementById('aZero').textContent=sinIniciar;
+
+  document.getElementById('adminRows').innerHTML=lista.length?lista.map(s=>`<tr>
     <td><b>${esc(s.nombre)}</b><br><span class="sub">${esc(s.id)}</span></td>
+    <td>${esc(s.grado)}° ${esc(s.grupo)}</td>
     <td><b>${s.progreso}%</b></td>
     <td>${esc(s.prioridad||'—')}</td>
     <td>${s.cierre&&s.cierre.constanciaHabilitada==='SI'
@@ -1404,17 +1522,7 @@ function renderAdminGroup_(g){
     <td>${esc(s.ultima)}</td>
     <td>${esc(s.siguiente)}</td>
     <td><button class="btn" onclick="openAdminFile('${esc(s.id)}')">Expediente</button> ${s.whatsappUrl?`<button class="btn" onclick="window.open('${esc(s.whatsappUrl)}','_blank')">WhatsApp</button>`:''}</td>
-  </tr>`).join('');
-  return `<section class="groupSection">
-    <div class="groupHeader">
-      <h4>${esc(g.label)}</h4>
-      <div class="groupMeta"><span>${g.items.length} estudiantes</span><span>100 %: ${completos}</span><span>En proceso: ${proceso}</span><span>Sin iniciar: ${sin}</span></div>
-    </div>
-    <div style="overflow:auto"><table>
-      <thead><tr><th>Estudiante</th><th>Avance</th><th>Seguimiento</th><th>Cierre</th><th>Última</th><th>Siguiente</th><th>Acciones</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table></div>
-  </section>`;
+  </tr>`).join(''):`<tr><td colspan="8"><div class="notice">No hay estudiantes en el grupo seleccionado.</div></td></tr>`;
 }
 function openAdminFile(id){
   busy(true,'Abriendo expediente…');
@@ -1425,6 +1533,7 @@ function openAdminFile(id){
 
     const d=r.diagnostico||null;
     const ac=r.academico||{};
+    const cu=r.cumplimiento||{};
     const c=r.conductual||{};
     const cierre=r.cierre||{};
     const academicOK=cierre.academicoValidado==='SI';
@@ -1465,7 +1574,42 @@ function openAdminFile(id){
     </div>
 
     <div class="resultBox">
-      <h4>3. Informe conductual · fuente Programa de Asistencia</h4>
+      <h4>3. Seguimiento de cumplimiento académico · fuente Notificaciones y Cumplimiento</h4>
+      <div class="notice">
+        <b>Registros:</b> ${cu.total||0} ·
+        <b>Cumplidos:</b> ${cu.cumplidos||0} ·
+        <b>En seguimiento:</b> ${cu.enSeguimiento||0} ·
+        <b>Pendientes:</b> ${cu.pendientes||0} ·
+        <b>Vencidos:</b> ${cu.vencidos||0}
+      </div>
+      <p>${esc(cu.mensaje||'Sin registros de incumplimiento académico.')}</p>
+      <p>
+        <b>Pendientes que requieren solventarse:</b> ${cu.afectanConstancia||0}
+        ${cu.criticos?` · <b>Críticos:</b> ${cu.criticos}`:''}
+      </p>
+      ${(cu.registros||[]).length?`
+        <table style="margin-top:10px">
+          <thead><tr><th>Asignatura</th><th>Situación</th><th>Actividad</th><th>Estado</th><th>Impacto</th><th>Seguimiento</th></tr></thead>
+          <tbody>${(cu.registros||[]).slice(0,20).map(x=>`<tr>
+            <td>${esc(x.asignatura||'—')}</td>
+            <td>${esc(x.tipo||'—')}</td>
+            <td>${esc(x.actividad||'—')}</td>
+            <td>${esc((x.estado||'PENDIENTE').replaceAll('_',' '))}</td>
+            <td>${esc((x.impacto||'NO_AFECTA').replaceAll('_',' '))}</td>
+            <td>${esc(x.observaciones||x.fechaCumplimiento||x.ultimaActualizacion||'—')}</td>
+          </tr>`).join('')}</tbody>
+        </table>`:
+        '<div class="notice">No existen registros de incumplimiento para este estudiante.</div>'}
+      <div class="notice" style="margin-top:10px">
+        <b>Constancia:</b>
+        ${cu.constanciaOk
+          ? 'sin pendientes abiertos que la afecten.'
+          : 'existen pendientes por solventar. En esta primera etapa el indicador es informativo y la validación final continúa a cargo de Orientación Educativa.'}
+      </div>
+    </div>
+
+    <div class="resultBox">
+      <h4>4. Informe conductual · fuente Programa de Asistencia</h4>
       <div class="notice">
         <b>Vinculación:</b> ${c.vinculado?'Correcta':'Pendiente'} ·
         <b>Reportes:</b> ${c.total||0} ·
@@ -1480,7 +1624,7 @@ function openAdminFile(id){
     </div>
 
     <div class="resultBox">
-      <h4>4. Impresión y expediente PDF</h4>
+      <h4>5. Impresión y expediente PDF</h4>
       <p>Puedes imprimir cada documento por separado o crear un solo PDF con el expediente completo del estudiante.</p>
       <table style="margin-top:10px">
         <thead><tr><th>Documento</th><th>Estado</th><th>Impresión individual</th></tr></thead>
@@ -1502,12 +1646,14 @@ function openAdminFile(id){
     </div>
 
     <div class="resultBox">
-      <h4>4. Cierre semestral y constancia integral</h4>
+      <h4>6. Cierre semestral y constancia integral</h4>
       <div class="notice">
         Reporte académico/orientativo:
         <b>${academicOK?'✓ Validado':'Pendiente'}</b><br>
         Informe conductual:
         <b>${conductOK?'✓ Validado':'Pendiente'}</b><br>
+        Cumplimiento académico:
+        <b>${cu.constanciaOk?'✓ Sin pendientes que afecten constancia':((cu.afectanConstancia||0)+' pendiente(s) por solventar')}</b><br>
         Constancia final:
         <b>${finalOK?'✓ Habilitada':'Pendiente de autorización'}</b>
       </div>
@@ -1646,5 +1792,13 @@ function generateDiagnosisPdf(id){
   });
 }
 </script>
+
+<iframe id="epoantGasBridge" src="https://script.google.com/macros/s/AKfycbyWDG7dnYQ6VgNLXG4UCInoFr0b9WxZtLVUVJE3tnQdp8A0I222vV4j1TgEPPvTlag/exec?bridge=1"
+  title="Conexión segura EPOANT" aria-hidden="true"
+  style="position:fixed;width:1px;height:1px;opacity:0;pointer-events:none;border:0;left:-10px;bottom:-10px"></iframe>
+<script>
+window.addEventListener('load',function(){setTimeout(epoantBridgeHello,400);});
+</script>
+
 </body>
 </html>
